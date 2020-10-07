@@ -8,6 +8,7 @@ const keyMap = [
 ];
 
 const useControl = () => {
+    // keyboard
     const [controls, setControls] = useState([]);
 
     useEffect(() => {
@@ -34,6 +35,33 @@ const useControl = () => {
         return () => {
             window.removeEventListener('keydown', keyDown);
             window.removeEventListener('keyup', keyUp);
+        };
+    }, []);
+
+    // gamepad
+    const [axes, setAxes] = useState([]);
+
+    useEffect(() => {
+        socket.emit('gamepad', axes);
+    }, [axes]);
+
+    useEffect(() => {
+        let interval = false;
+        const connected = () => {
+            const axes = [];
+            interval = setInterval(() => {
+                for (const gamepad of navigator.getGamepads())
+                    if (gamepad) for (const [index, axis] of gamepad.axes.entries())
+                        if (axes[index] !== axis) {
+                            axes[index] = axis;
+                            setAxes(axes.slice());
+                        }
+            });
+        };
+        window.addEventListener('gamepadconnected', connected);
+        return () => {
+            window.removeEventListener('gamepadconnected', connected);
+            clearInterval(interval);
         };
     }, []);
 };
