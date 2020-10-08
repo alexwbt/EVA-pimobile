@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import socket from "../socket";
 
 const keyMap = [
     'w', 'a', 's', 'd',
@@ -10,10 +9,6 @@ const keyMap = [
 const useControl = () => {
     // keyboard
     const [controls, setControls] = useState([]);
-
-    useEffect(() => {
-        socket.emit('controls', controls);
-    }, [controls]);
 
     useEffect(() => {
         const downKeys = new Set();
@@ -42,10 +37,6 @@ const useControl = () => {
     const [axes, setAxes] = useState([]);
 
     useEffect(() => {
-        socket.emit('gamepad', axes);
-    }, [axes]);
-
-    useEffect(() => {
         let interval = false;
         const connected = () => {
             const axes = [];
@@ -64,6 +55,8 @@ const useControl = () => {
             clearInterval(interval);
         };
     }, []);
+
+    return [controls, axes];
 };
 
 export default useControl;

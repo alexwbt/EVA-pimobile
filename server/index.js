@@ -10,14 +10,14 @@ io.on('connection', socket => {
         socket.join(room);
     });
 
-    socket.on('controls', data => {
-        console.log(data);
-        io.to('pimobile').emit('controls', data);
+    socket.on('controls', ({ room, controls }) => {
+        console.log(controls);
+        io.to(room).emit('controls', controls);
     });
-
-    socket.on('gamepad', data => {
-        console.log(data);
-        io.to('pimobile').emit('gamepad', data);
+    
+    socket.on('gamepad', ({ room, axes }) => {
+        console.log(axes);
+        io.to(room).emit('gamepad', axes);
     });
 });
 
