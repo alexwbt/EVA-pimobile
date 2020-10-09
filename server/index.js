@@ -10,14 +10,9 @@ io.on('connection', socket => {
         socket.join(room);
     });
 
-    socket.on('controls', ({ room, controls }) => {
-        console.log(controls);
-        io.to(room).emit('controls', controls);
-    });
-    
-    socket.on('gamepad', ({ room, axes }) => {
+    socket.on('controls', ({ room, axes }) => {
         console.log(axes);
-        io.to(room).emit('gamepad', axes);
+        io.to(room).emit('controls', axes);
     });
 });
 
