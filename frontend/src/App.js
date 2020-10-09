@@ -4,15 +4,11 @@ import socket from './socket';
 import IndexModal from './IndexModal';
 
 function App() {
-    const [controls, axes] = useControl();
+    const axes = useControl();
     const [room, setRoom] = useState();
 
     useEffect(() => {
-        if (room) socket.emit('controls', { room, controls });
-    }, [room, controls]);
-
-    useEffect(() => {
-        if (room) socket.emit('gamepad', { room, axes });
+        if (room) socket.emit('controls', { room, axes: axes.map(a => Math.round(a * 10000) / 10000) });
     }, [room, axes]);
 
     const joinRoom = useCallback(room => {

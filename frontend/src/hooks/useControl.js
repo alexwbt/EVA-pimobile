@@ -7,13 +7,36 @@ const keyMap = [
 ];
 
 const useControl = () => {
-    // keyboard
-    const [controls, setControls] = useState([]);
+    const [axes, setAxes] = useState([]);
 
+    // keyboard
     useEffect(() => {
         const downKeys = new Set();
         const update = () => {
-            setControls(keyMap.map(key => downKeys.has(key)));
+            const controls = keyMap.map(key => downKeys.has(key));
+            let x1 = 0;
+            let y1 = 0;
+            let x2 = 0;
+            let y2 = 0;
+            // w a s d
+            if (controls[0]) y1++;
+            if (controls[1]) x1--;
+            if (controls[2]) y1--;
+            if (controls[3]) x1++;
+            // up down left right
+            if (controls[4]) y2++;
+            if (controls[5]) y2--;
+            if (controls[6]) x2--;
+            if (controls[7]) x2++;
+
+            const d1 = Math.atan2(y1, x1);
+            if (x1) x1 = Math.cos(d1);
+            if (y1) y1 = Math.sin(d1);
+            const d2 = Math.atan2(y2, x2);
+            if (x2) x2 = Math.cos(d2);
+            if (y2) y2 = Math.sin(d2);
+
+            setAxes([x1, y1, x2, y2]);
         };
         const keyDown = e => {
             if (e.repeat) return;
@@ -34,8 +57,6 @@ const useControl = () => {
     }, []);
 
     // gamepad
-    const [axes, setAxes] = useState([]);
-
     useEffect(() => {
         let interval = false;
         const connected = () => {
@@ -56,7 +77,7 @@ const useControl = () => {
         };
     }, []);
 
-    return [controls, axes];
+    return axes;
 };
 
 export default useControl;
