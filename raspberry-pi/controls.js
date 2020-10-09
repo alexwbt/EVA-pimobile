@@ -3,9 +3,10 @@ const setWheels = (coordinates) => {
 }
 
 const calculateWheelVelocity = (axes) => {
+    // console.log(axes)
     const wheelVelocities = {};
-    const vx = axes[0];
-    const vy = axes[1];
+    const vx = axes[1];
+    const vy = axes[0];
     const w0 = axes[2];
     const l1 = Number(process.env.HORIZONTAL_WHEEL_CENTER_DISTANCE);
     const l2 = Number(process.env.VERTICAL_WHEEL_CENTER_DISTANCE);
@@ -15,9 +16,13 @@ const calculateWheelVelocity = (axes) => {
     wheelVelocities.leftFront = (vx + vy - angular_velocity) / r;
     wheelVelocities.rightFront = (vx - vy + angular_velocity) / r;
     wheelVelocities.leftBack = (vx - vy - angular_velocity) / r;
-    wheelVelocities.leftFront = (vx + vy + angular_velocity) / r;
+    wheelVelocities.rightBack = (vx + vy + angular_velocity) / r;
 
     console.log(wheelVelocities)
 
     // setWheels(wheelVelocities);
 }
+
+module.exports = {
+    calculateWheelVelocity
+} 
