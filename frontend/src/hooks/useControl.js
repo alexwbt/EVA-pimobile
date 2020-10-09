@@ -6,6 +6,8 @@ const keyMap = [
     'ArrowLeft', 'ArrowRight',
 ];
 
+const round = value => Math.round(value * 100) / 100;
+
 const useControl = () => {
     const [axes, setAxes] = useState([]);
 
@@ -36,7 +38,7 @@ const useControl = () => {
             if (x2) x2 = Math.cos(d2);
             if (y2) y2 = Math.sin(d2);
 
-            setAxes([x1, y1, x2, y2]);
+            setAxes([x1, y1, x2, y2].map(v => round(v)));
         };
         const keyDown = e => {
             if (e.repeat) return;
@@ -63,11 +65,13 @@ const useControl = () => {
             const axes = [];
             interval = setInterval(() => {
                 for (const gamepad of navigator.getGamepads())
-                    if (gamepad) for (const [index, axis] of gamepad.axes.entries())
-                        if (axes[index] !== axis) {
-                            axes[index] = axis;
+                    if (gamepad) for (const [index, axis] of gamepad.axes.entries()) {
+                        const value = round(axis * (index % 2 ? -1 : 1));
+                        if (axes[index] !== value) {
+                            axes[index] = value;
                             setAxes(axes.slice());
                         }
+                    }
             });
         };
         window.addEventListener('gamepadconnected', connected);

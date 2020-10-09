@@ -8,7 +8,7 @@ function App() {
     const [room, setRoom] = useState();
 
     useEffect(() => {
-        if (room) socket.emit('controls', { room, axes: axes.map(a => Math.round(a * 10000) / 10000) });
+        if (room) socket.emit('controls', { room, axes });
     }, [room, axes]);
 
     const joinRoom = useCallback(room => {
