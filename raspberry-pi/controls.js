@@ -1,28 +1,37 @@
-const setWheels = (coordinates) => {
-    // Should be some GPIO stuff. 
+const { Gpio } = require('pigpio');
+
+class Wheel {
+    constructor(pins) {
+        this.speedPin = new Gpio(pins.speed, { mode: Gpio.OUTPUT });
+        this.forwardPin = new Gpio(pins.forward, { mode: Gpio.OUTPUT });
+        this.backwardPin = new Gpio(pins.backward, { mode: Gpio.OUTPUT });
+    }
+
+    update(velocity) {
+        let speed = Math.min(1, Math.abs(velocity)) * 255;
+        this.speedPin.analogWrite(speed);
+        this.forwardPin.digitalWrite(velocity > 0 ? 1 : 0);
+        this.backwardPin.digitalWrite(velocity < 0 ? 1 : 0);
+    }
 }
 
-const calculateWheelVelocity = (axes) => {
+const leftFrontWheel = new Wheel();
+const leftBackWheel = new Wheel();
+const rightFrontWheel = new Wheel();
+const rightBackWheel = new Wheel();
+
+const calculateWheelVelocity = ([vy, vx, w0]) => {
     // console.log(axes)
-    const wheelVelocities = {};
-    const vx = axes[1];
-    const vy = axes[0];
-    const w0 = axes[2];
-    const l1 = Number(process.env.HORIZONTAL_WHEEL_CENTER_DISTANCE);
-    const l2 = Number(process.env.VERTICAL_WHEEL_CENTER_DISTANCE);
-    const r = Number(process.env.WHEEL_RADIUS);
-    const angular_velocity = ((l1 + l2) * w0);
+    // const l1 = Number(process.env.HORIZONTAL_WHEEL_CENTER_DISTANCE);
+    // const l2 = Number(process.env.VERTICAL_WHEEL_CENTER_DISTANCE);
+    // const r = Number(process.env.WHEEL_RADIUS);
 
-    wheelVelocities.leftFront = (vx + vy - angular_velocity) / r;
-    wheelVelocities.rightFront = (vx - vy + angular_velocity) / r;
-    wheelVelocities.leftBack = (vx - vy - angular_velocity) / r;
-    wheelVelocities.rightBack = (vx + vy + angular_velocity) / r;
-
-    console.log(wheelVelocities)
-
-    // setWheels(wheelVelocities);
+    leftFrontWheel.update(vx + vy - w0);
+    rightFrontWheel.update(vx - vy + w0);
+    leftBackWheel.update(vx - vy - w0);
+    rightBackWheel.update(vx + vy + w0);
 }
 
 module.exports = {
     calculateWheelVelocity
-} 
+};

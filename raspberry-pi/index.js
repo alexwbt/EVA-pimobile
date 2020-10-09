@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { IP_ADDRESS, ID } = process.env; 
+const { IP_ADDRESS, ID } = process.env;
 const io = require('socket.io-client');
 const socket = io(IP_ADDRESS);
 const Controls = require('./controls')
@@ -10,5 +10,4 @@ socket.emit('join-room', ID);
 
 socket.on('controls', axes => {
     Controls.calculateWheelVelocity(axes);
-})
-
+});
